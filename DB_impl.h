@@ -7,14 +7,15 @@
  * It is a common convention to append "_impl" to a private implementation of
  * some public interface, so we do so here.
  *
- * Author: <TODO: Group Member Names>
- * Lab instructor: <TODO: Your lab instructor's name here>
- * Lecture instructor: <TODO: Your lecture instructor's name here>
+ * Author: Taha Rizwan,Mark Seme,Rebecca Ngyuen
+ * Lab instructor: Hanan Saleh
+ * Lecture instructor: Dara Wagh 
  */
 
 
 #ifndef DB_IMPL_H
 #define DB_IMPL_H
+
 
 
 #endif
