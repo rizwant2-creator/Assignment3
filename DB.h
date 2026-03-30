@@ -5,9 +5,9 @@
  * Please do not modify any code in this file!  We will be testing your code
  * under the assumption that the public interface matches this interface.
  *
- * Author: <TODO: Group Member Names>
- * Lab instructor: <TODO: Your lab instructor's name here>
- * Lecture instructor: <TODO: Your lecture instructor's name here>
+ * Author: Taha Rizwan,Mark Seme,Rebecca Ngyuen
+ * Lab instructor: Hanan Saleh
+ * Lecture instructor: Dara Wagh
  */
 
 #ifndef DB_H
@@ -18,6 +18,34 @@
  * WHICH WILL BE FIELDS IN THE STRUCT DataBase BELOW. YOU MAY DECLARE ADDITIONAL
  * STRUCTS AS NEEDED.
  */
+
+ typedef struct {
+    int id;
+    char *name;
+} TableEntry;
+
+typedef struct {
+    int id;
+    char *name;
+
+} NeighbourhoodTableEntry;
+
+typedef struct {
+    int tableID;
+    int tableTypeID;
+    int surfaceMaterialID;
+    int structuralMaterialID;
+    int neighbourhoodID;
+    int siteID;
+    char *ward;
+    char *latitude;
+    char *longitude;
+    char *location;
+    char *street;
+
+} PicnicTableEntry;
+
+
 
 /*
  * The INIT_SIZE is only relevant if you are using arrays for your data structures. 
@@ -30,6 +58,8 @@
  * You may change the internal details of the struct below,
  * only keep it typedef'ed to DataBase
  */
+
+
 typedef struct {
     // You can add anything you see fit here
     Table *tableTypeTable;
