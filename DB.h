@@ -45,6 +45,19 @@ typedef struct {
 
 } PicnicTableEntry;
 
+typedef struct //theyll be picnictableentries inside this table
+{
+    PicnicTableEntry *entries;
+    int size;
+    int capacity;
+} PicnicTable;
+
+typedef struct //itll have tableentries
+{
+    TableEntry* entries;
+    int size;
+    int capacity;
+} Table;
 
 
 /*
