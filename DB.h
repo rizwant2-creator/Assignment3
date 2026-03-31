@@ -28,7 +28,7 @@ typedef struct {
     int id;
     char *name;
 
-} NeighbourhoodTableEntry;
+} NeighbourhoodTable;
 
 typedef struct {
     int tableID;
@@ -80,6 +80,7 @@ typedef struct {
     Table *structuralMaterialTable;
     NeighbourhoodTable *neighborhoodTable;
     PicnicTable *picnicTableTable;
+    char* lineEnding;
 } DataBase;
 
 /* Declare a global DataBase variable*/
