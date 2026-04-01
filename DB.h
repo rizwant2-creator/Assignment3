@@ -27,8 +27,7 @@
 typedef struct {
     int id;
     char *name;
-
-} NeighbourhoodTable;
+} NeighbourhoodEntry;
 
 typedef struct {
     int tableID;
@@ -44,6 +43,12 @@ typedef struct {
     char *street;
 
 } PicnicTableEntry;
+
+typedef struct {
+    NeighbourhoodEntry *entries;
+    int size;
+    int capacity;
+} NeighbourhoodTable;
 
 typedef struct //theyll be picnictableentries inside this table
 {
