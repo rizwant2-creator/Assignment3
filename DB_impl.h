@@ -16,6 +16,6 @@
 #ifndef DB_IMPL_H
 #define DB_IMPL_H
 
-
+void importDBBinary(char* fileName); //this function will be used to load the binary file
 
 #endif

@@ -28,6 +28,13 @@ typedef struct {
     int id;
     char *name;
 
+} NeighbourhoodEntry;
+
+typedef struct {
+    NeighbourhoodEntry* entries;
+    int size;
+    int capacity;
+
 } NeighbourhoodTable;
 
 typedef struct {

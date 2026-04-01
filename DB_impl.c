@@ -9,3 +9,8 @@
  */
 
 #include "DB.h"      /* Import the public database header. */
+
+void importDBBinary(char* fileName)
+{
+    // code of loading binary file into database
+}

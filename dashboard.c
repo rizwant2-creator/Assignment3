@@ -11,9 +11,32 @@
 
 //You may include other original headers as you see fit
 #include "DB.h"
+#include "DB_impl.h"
 
 int main(int argc, char *argv[]){
 
+    if (argc !=3)
+    {
+        printf("command should be as follows:\n");
+        printf("%s -c <csv file name>\n",argv[0]);
+        printf("%s -b <binary file name>\n",argv[0]);
+        return 1;
+    }
+    //with having a correct command
+    if (strcmp(argv[1],"-c")==0)
+    {
+        // read the csv file here
+        importDB(argv[2]);
 
+    }
+    else if(strcmp(argv[1],"-b")==0)
+    {
+        // read the binary file
+        importDBBinary(argv[2]);
+    }   
+    else
+    {
+        printf("invalid mode. use -c or -b\n")
+    }
     return 0;
 }
