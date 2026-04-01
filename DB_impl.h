@@ -15,7 +15,19 @@
 
 #ifndef DB_IMPL_H
 #define DB_IMPL_H
+#include "DB.h"
 
+//table creators
+Table *createTable(void);
+NeighbourhoodTable *createNeighbourhoodTable(void);
+PicnicTable *createPicnicTable(void);
 
+//lookup helpers
+int lookupTable(Table *t, const char *name);
+int lookupNeighbourhood(NeighbourhoodTable, *nt, int id, const char *name);
+
+//lookup by id helpers
+const char *lookupTableValue(Table *t, int id);
+const char *lookupNeighbourhoodName(NeighbourhoodTable, *nt, int id);
 
 #endif
