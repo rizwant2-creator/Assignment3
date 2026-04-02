@@ -5,7 +5,7 @@
  * Please do not modify any code in this file!  We will be testing your code
  * under the assumption that the public interface matches this interface.
  *
- * Author: Taha Rizwan,Mark Seme,Rebecca Ngyuen
+ * Author: Taha Rizwan,Marc Seme,Rebecca Ngyuen
  * Lab instructor: Hanan Saleh
  * Lecture instructor: Dara Wagh
  */

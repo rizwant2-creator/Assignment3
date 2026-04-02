@@ -3,7 +3,7 @@
  * TODO: Provide a high-level description of what is contained
  * in this file.
  *
- * Author: Taha Rizwan,Mark Seme,Rebecca Ngyuen
+ * Author: Taha Rizwan,Marc Seme,Rebecca Ngyuen
  * Lab instructor: Hanan Saleh
  * Lecture instructor: Dara Wagh
  */
@@ -65,14 +65,30 @@ PicnicTable *createPicnicTable(void){ //create empty picnic table
     return pt;
 }
 
-int lookupTable(Table *t, const char *name){
-
+//lookup by name helpers for Table. 
+//Returns the id of the entry with the given name, or 0 if not found.
+int lookupTableID(Table *t, const char *name){
+    int i;
+    for (i = 0; i < t->size; i++){
+        if (strcmp(t->entries[i].name, name) == 0){
+            return t->entries[i].id;
+        }
+    }
+    return -1;
 }
 
+//lookup by id and name helpers for NeighbourhoodTable
 int lookupNeighbourhood(NeighbourhoodTable *nt, int id, const char *name){
-
+    int i;
+    for (i = 0; i < nt->size; i++){
+        if (nt->entries[i].id == id && strcmp(nt->entries[i].name, name) == 0){
+            return id;
+        }
+    }
+    return -1;
 }
 
+//lookup by id helpers returns Table name given id
 const char *lookupTableName(Table *t, int id){
     int i;
     for (i = 0; i < t->size; i++){
@@ -80,8 +96,10 @@ const char *lookupTableName(Table *t, int id){
             return t->entries[i].name;
         }
     }
+    return NULL;
 }
 
+//lookup by id helpers returns Neighbourhood name given id
 const char *lookupNeighbourhoodName(NeighbourhoodTable *nt, int id){
     int i;
     for (i = 0; i < nt->size; i++){
@@ -89,4 +107,68 @@ const char *lookupNeighbourhoodName(NeighbourhoodTable *nt, int id){
             return nt->entries[i].name;
         }
     }
+    return NULL;
+}
+
+//insertion helpers for Table. Returns the id of the inserted entry, or -1 on failure.
+int insertToTable(Table *t, const char *name){
+
+    if (t->size >= t->capacity){
+        t->capacity *= 2;
+        t->entries = realloc(t->entries, sizeof(TableEntry) * t->capacity);
+        if (t->entries == NULL){
+            printf("Memory allocation failed for table entries\n");
+            return -1;
+        }
+    }
+
+    int newEntryid = t->size + 1; //id starts at 1
+    t->entries[t->size].id = newEntryid;
+    t->entries[t->size].name = malloc(strlen(name) + 1);
+    if (t->entries[t->size].name == NULL){
+        printf("Memory allocation failed for entry name\n");
+        return -1;
+    }
+
+    strcpy(t->entries[t->size].name, name);
+    t->size++;
+    return newEntryid;
+}
+
+//insertion helpers for NeighbourhoodTable. Returns the id of the inserted entry, or -1 on failure.
+int insertToNeighbourhoodTable(NeighbourhoodTable *nt, int id, const char *name){
+
+    if (nt->size >= nt->capacity){
+        nt->capacity *= 2;
+        nt->entries = realloc(nt->entries, sizeof(NeighbourhoodEntry) * nt->capacity);
+        if (nt->entries == NULL){
+            return -1;
+        }
+    }
+
+    nt->entries[nt->size].id = id;
+    nt->entries[nt->size].name = malloc(strlen(name) + 1);
+    if (nt->entries[nt->size].name == NULL){
+        printf("Memory allocation failed for entry name\n");
+        return -1;
+    }
+    strcpy(nt->entries[nt->size].name, name);
+    nt->size++;
+    return id;
+}
+
+//insertion helpers for PicnicTable. Returns the id of the inserted entry, or -1 on failure.
+int insertToPicnicTable(PicnicTable *pt, PicnicTableEntry *entry){
+
+    if (pt->size >= pt->capacity){
+        pt->capacity *= 2;
+        pt->entries = realloc(pt->entries, sizeof(PicnicTableEntry) * pt->capacity);
+        if (pt->entries == NULL){
+            printf("Memory allocation failed for picnic table entries\n");
+            return -1;
+        }
+    }
+    pt->entries[pt->size] = *entry; //copy entry to table
+    pt->size++;
+    return entry->tableID;
 }
