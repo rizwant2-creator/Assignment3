@@ -64,3 +64,29 @@ PicnicTable *createPicnicTable(void){ //create empty picnic table
     pt->capacity = INIT_SIZE;
     return pt;
 }
+
+int lookupTable(Table *t, const char *name){
+
+}
+
+int lookupNeighbourhood(NeighbourhoodTable *nt, int id, const char *name){
+
+}
+
+const char *lookupTableName(Table *t, int id){
+    int i;
+    for (i = 0; i < t->size; i++){
+        if (t->entries[i].id == id){
+            return t->entries[i].name;
+        }
+    }
+}
+
+const char *lookupNeighbourhoodName(NeighbourhoodTable *nt, int id){
+    int i;
+    for (i = 0; i < nt->size; i++){
+        if (nt->entries[i].id == id){
+            return nt->entries[i].name;
+        }
+    }
+}
