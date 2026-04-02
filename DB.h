@@ -36,6 +36,7 @@ typedef struct {
     int structuralMaterialID;
     int neighbourhoodID;
     int siteID;
+    char *neighborhoodName;
     char *ward;
     char *latitude;
     char *longitude;
