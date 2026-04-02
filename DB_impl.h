@@ -30,4 +30,7 @@ int lookupNeighbourhood(NeighbourhoodTable, *nt, int id, const char *name);
 const char *lookupTableValue(Table *t, int id);
 const char *lookupNeighbourhoodName(NeighbourhoodTable, *nt, int id);
 
+//insert functions to Tables
+int insertInTable(Table *t, char *name);
+
 #endif
