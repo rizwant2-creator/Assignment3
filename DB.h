@@ -5,7 +5,7 @@
  * Please do not modify any code in this file!  We will be testing your code
  * under the assumption that the public interface matches this interface.
  *
- * Author: Taha Rizwan,Mark Seme,Rebecca Ngyuen
+ * Author: Taha Rizwan,Marc Seme,Rebecca Ngyuen
  * Lab instructor: Hanan Saleh
  * Lecture instructor: Dara Wagh
  */
@@ -28,13 +28,6 @@ typedef struct {
     int id;
     char *name;
 
-} NeighbourhoodEntry;
-
-typedef struct {
-    NeighbourhoodEntry* entries;
-    int size;
-    int capacity;
-
 } NeighbourhoodTable;
 
 typedef struct {
@@ -44,6 +37,7 @@ typedef struct {
     int structuralMaterialID;
     int neighbourhoodID;
     int siteID;
+    char *neighborhoodName;
     char *ward;
     char *latitude;
     char *longitude;
@@ -51,6 +45,12 @@ typedef struct {
     char *street;
 
 } PicnicTableEntry;
+
+typedef struct {
+    NeighbourhoodEntry *entries;
+    int size;
+    int capacity;
+} NeighbourhoodTable;
 
 typedef struct //theyll be picnictableentries inside this table
 {
