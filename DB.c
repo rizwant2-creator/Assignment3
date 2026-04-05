@@ -18,6 +18,7 @@ DataBase *Db = NULL;
 
 void importDB(char *fileName){
     FILE *fp = fopen(fileName, "r");
+    char line[10000];
     if (fp == NULL){
         fprintf(stderr, "Could not open file %s\n", fileName);
         return;
@@ -36,7 +37,15 @@ void importDB(char *fileName){
     Db->picnicTableTable = createPicnicTable();
 
     //read csv
-    
+    if (fgets(line,sizeof(line),fp)==NULL)
+    {
+        fclose(fp);
+        return;
+    }
+    while (fgets(line,sizeof(line),fp)!=NULL)
+    {
+        //parse this line on the basis of commas 
+    }
 
 }
 
