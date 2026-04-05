@@ -36,7 +36,9 @@ int main(int argc, char *argv[]){
     }   
     else
     {
-        printf("invalid mode. use -c or -b\n")
+        printf("invalid mode. use -c or -b\n");
+        printf("\n");
+
     }
     return 0;
 }

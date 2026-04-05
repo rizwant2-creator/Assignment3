@@ -17,9 +17,6 @@
 #define DB_IMPL_H
 #include "DB.h"
 
-<<<<<<< HEAD
-void importDBBinary(char* fileName); //this function will be used to load the binary file
-=======
 //table creators
 Table *createTable(void);
 NeighbourhoodTable *createNeighbourhoodTable(void);
@@ -37,6 +34,5 @@ const char *lookupNeighbourhoodName(NeighbourhoodTable *nt, int id);
 int insertToTable(Table *t, const char *name);
 int insertToNeighbourhoodTable(NeighbourhoodTable *nt, int id, const char *name);
 int insertToPicnicTable(PicnicTable *pt, PicnicTableEntry *entry);
->>>>>>> e1acd3312a96cb9cf9d35595b6675d5e7280157e
 
 #endif

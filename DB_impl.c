@@ -9,12 +9,6 @@
  */
 
 #include "DB.h"      /* Import the public database header. */
-<<<<<<< HEAD
-
-void importDBBinary(char* fileName)
-{
-    // code of loading binary file into database
-=======
 #include "DB_impl.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -177,5 +171,4 @@ int insertToPicnicTable(PicnicTable *pt, PicnicTableEntry *entry){
     pt->entries[pt->size] = *entry; //copy entry to table
     pt->size++;
     return entry->tableID;
->>>>>>> e1acd3312a96cb9cf9d35595b6675d5e7280157e
 }
