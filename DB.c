@@ -13,12 +13,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 DataBase *Db = NULL;
 
 void importDB(char *fileName){
     FILE *fp = fopen(fileName, "r");
+    const char *source;
     char line[10000];
+    char* collums[11];
+    int siteID,tableTypeID,surfaceMaterialID,neighbourhoodID,parsedFields;
     if (fp == NULL){
         fprintf(stderr, "Could not open file %s\n", fileName);
         return;
@@ -36,19 +40,111 @@ void importDB(char *fileName){
     Db->neighborhoodTable = createNeighbourhoodTable();
     Db->picnicTableTable = createPicnicTable();
 
+    size_t length = strlen("\n");
+    Db->lineEnding = malloc(length+1);
+    
+    if (Db->lineEnding!=NULL)
+    {
+        memcpy(Db->lineEnding,"\n",length+1);
+
+    }
     //read csv
     if (fgets(line,sizeof(line),fp)==NULL)
     {
         fclose(fp);
         return;
     }
+    free (Db->lineEnding);
+    if (strstr(line,"\r\n")!=NULL)
+    {
+        source = "\r\n";
+    }
+    else
+    {
+        source = "\n"
+    }
+    length = strlen(source);
+    Db->lineEnding = malloc(length+1);
+    memcpy(Db->lineEnding,source,length+1);
+
     while (fgets(line,sizeof(line),fp)!=NULL)
     {
-        //parse this line on the basis of commas 
+        //parse this line on the basis of comma
+        parsedFields = parseLine(line,collums,11);//parse line function will give us 11
+        if (parsedFields!=11)
+        {
+            for (int i=0;i<parsedFields;i++)
+            {
+                free(collums[i]);
+
+            }
+            continue;
+
+        }
+        //fetched collums r 11
+        siteID = atoi(collums[0]);
+        
     }
 
 }
+int parseLine(const char* line,char** collums,int numOfCol)
+{
+    size_t length = strlen(line);
+    int count = 0, j = 0;
+    char* dupLine = malloc(length+1);
+    char ch;
+    bool isQuote = false;
+    int length;
 
+    if (dupLine==NULL)
+    {
+        return 0;
+    }
+    for (int i =0;i<length;i++)
+    {
+        ch = line[i];
+        if (ch=='"')
+        {
+            isQuote = !isQuote;
+            continue;
+
+        }
+        if (ch == ','&& isQuote == false)
+        {
+            dupLine[j]='\0';
+            if (count< numOfCol)
+            {
+                length = strlen(dupLine);
+                collums[count]=malloc(length+1);
+                memcpy(collums[count],dupLine,length+1);
+                count++;
+                
+            }
+            j = 0;
+            continue;
+        }
+        if ((ch =='\n'|| ch =='\r')&& isQuote== false)
+        {
+            continue;
+        }
+        dupLine[j] = ch;
+        j++;
+
+    }
+    dupLine[j]='\0';
+    if (count<numOfCol)
+    {
+        length = strlen(dupLine);
+        collums[count]=malloc(length+1);
+        memcpy(collums[count],dupLine,length+1);
+        count++;
+
+
+    }
+    free(dupLine);
+    return count;
+
+}
 void exportDB(char *fileName){
     int i;
     if (Db == NULL){
