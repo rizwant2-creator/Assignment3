@@ -7,7 +7,7 @@
  * It is a common convention to append "_impl" to a private implementation of
  * some public interface, so we do so here.
  *
- * Author: Taha Rizwan,Marc Seme,Rebecca Ngyuen
+ * Author: Taha Rizwan,Mark Seme,Rebecca Ngyuen
  * Lab instructor: Hanan Saleh
  * Lecture instructor: Dara Wagh 
  */
@@ -23,16 +23,14 @@ NeighbourhoodTable *createNeighbourhoodTable(void);
 PicnicTable *createPicnicTable(void);
 
 //lookup helpers
-int lookupTableID(Table *t, const char *name);
-int lookupNeighbourhood(NeighbourhoodTable *nt, int id, const char *name);
+int lookupTable(Table *t, const char *name);
+int lookupNeighbourhood(NeighbourhoodTable, *nt, int id, const char *name);
 
 //lookup by id helpers
-const char *lookupTableName(Table *t, int id);
-const char *lookupNeighbourhoodName(NeighbourhoodTable *nt, int id);
+const char *lookupTableValue(Table *t, int id);
+const char *lookupNeighbourhoodName(NeighbourhoodTable, *nt, int id);
 
-//insertion helpers
-int insertToTable(Table *t, const char *name);
-int insertToNeighbourhoodTable(NeighbourhoodTable *nt, int id, const char *name);
-int insertToPicnicTable(PicnicTable *pt, PicnicTableEntry *entry);
+//insert functions to Tables
+int insertInTable(Table *t, char *name);
 
 #endif

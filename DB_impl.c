@@ -70,7 +70,7 @@ PicnicTable *createPicnicTable(void){ //create empty picnic table
 int lookupTableID(Table *t, const char *name){
     int i;
     for (i = 0; i < t->size; i++){
-        if (strcmp(t->entries[i].name, name) == 0){
+        if (strcmp(t->entries[i].type, name) == 0){
             return t->entries[i].id;
         }
     }
@@ -81,7 +81,7 @@ int lookupTableID(Table *t, const char *name){
 int lookupNeighbourhood(NeighbourhoodTable *nt, int id, const char *name){
     int i;
     for (i = 0; i < nt->size; i++){
-        if (nt->entries[i].id == id && strcmp(nt->entries[i].name, name) == 0){
+        if (nt->entries[i].id == id && strcmp(nt->entries[i].nname, name) == 0){
             return id;
         }
     }
@@ -93,7 +93,7 @@ const char *lookupTableName(Table *t, int id){
     int i;
     for (i = 0; i < t->size; i++){
         if (t->entries[i].id == id){
-            return t->entries[i].name;
+            return t->entries[i].type;
         }
     }
     return NULL;
@@ -104,7 +104,7 @@ const char *lookupNeighbourhoodName(NeighbourhoodTable *nt, int id){
     int i;
     for (i = 0; i < nt->size; i++){
         if (nt->entries[i].id == id){
-            return nt->entries[i].name;
+            return nt->entries[i].nname;
         }
     }
     return NULL;
@@ -122,15 +122,15 @@ int insertToTable(Table *t, const char *name){
         }
     }
 
-    int newEntryid = t->size + 1; //id starts at 1
+    int newEntryid = t->size; //id starts at 0
     t->entries[t->size].id = newEntryid;
-    t->entries[t->size].name = malloc(strlen(name) + 1);
-    if (t->entries[t->size].name == NULL){
+    t->entries[t->size].type = malloc(strlen(name) + 1);
+    if (t->entries[t->size].type == NULL){
         printf("Memory allocation failed for entry name\n");
         return -1;
     }
 
-    strcpy(t->entries[t->size].name, name);
+    strcpy(t->entries[t->size].type, name);
     t->size++;
     return newEntryid;
 }
@@ -147,12 +147,12 @@ int insertToNeighbourhoodTable(NeighbourhoodTable *nt, int id, const char *name)
     }
 
     nt->entries[nt->size].id = id;
-    nt->entries[nt->size].name = malloc(strlen(name) + 1);
-    if (nt->entries[nt->size].name == NULL){
+    nt->entries[nt->size].nname = malloc(strlen(name) + 1);
+    if (nt->entries[nt->size].nname == NULL){
         printf("Memory allocation failed for entry name\n");
         return -1;
     }
-    strcpy(nt->entries[nt->size].name, name);
+    strcpy(nt->entries[nt->size].nname, name);
     nt->size++;
     return id;
 }

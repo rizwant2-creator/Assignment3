@@ -5,7 +5,7 @@
  * Please do not modify any code in this file!  We will be testing your code
  * under the assumption that the public interface matches this interface.
  *
- * Author: Taha Rizwan,Marc Seme,Rebecca Ngyuen
+ * Author: Taha Rizwan,Mark Seme,Rebecca Ngyuen
  * Lab instructor: Hanan Saleh
  * Lecture instructor: Dara Wagh
  */
@@ -21,12 +21,12 @@
 
  typedef struct {
     int id;
-    char *name;
+    char *type;
 } TableEntry;
 
 typedef struct {
     int id;
-    char *name;
+    char *nname;
 } NeighbourhoodEntry;
 
 typedef struct {
@@ -36,7 +36,6 @@ typedef struct {
     int structuralMaterialID;
     int neighbourhoodID;
     int siteID;
-    char *neighborhoodName;
     char *ward;
     char *latitude;
     char *longitude;
