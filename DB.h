@@ -21,12 +21,12 @@
 
  typedef struct {
     int id;
-    char *name;
+    char *type;
 } TableEntry;
 
 typedef struct {
     int id;
-    char *name;
+    char *nname;
 } NeighbourhoodEntry;
 
 typedef struct {

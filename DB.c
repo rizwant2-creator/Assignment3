@@ -3,11 +3,231 @@
  * TODO: Provide a high-level description of what is contained
  * in this file.
  *
- * Author: Taha Rizwan,Mark Seme,Rebecca Ngyuen
+ * Author: Taha Rizwan,Marc Seme,Rebecca Ngyuen
  * Lab instructor: Hanan Saleh
  * Lecture instructor: Dara Wagh
  */
 
-#include "DB.h"       /* Import the public database header. */
-#include "DB_impl.h"  /* Import the private database header */
+#include "DB.h"       // Import the public database header. 
+#include "DB_impl.h"  // Import the private database header 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
+DataBase *Db = NULL;
+
+// Parse one CSV field from src into buffer
+static char *fieldParser(char *src, char *buffer, int buffSize) {
+    int i = 0;
+    if (*src == '"') { // if field starts with a quote, read until closing quote
+        src++; // skip opening quote
+        while (*src && *src != '"') {
+            if (i < buffSize - 1) buffer[i++] = *src;
+            src++;
+        }
+        if (*src == '"') src++; // skip closing quote
+        if (*src == ',') src++; // skip comma separator
+    } else {
+        while (*src && *src != ',' && *src != '\n' && *src != '\r') {
+            if (i < buffSize - 1) buffer[i++] = *src;
+            src++;
+        }
+        if (*src == ',') src++; // skip comma separator
+    }
+    buffer[i] = '\0';
+    return src;
+}
+
+void importDB(char *fileName) {
+    FILE *fp = fopen(fileName, "r");
+    if (fp == NULL) {
+        fprintf(stderr, "Could not open file %s\n", fileName);
+        return;
+    }
+
+    Db = malloc(sizeof(DataBase));
+    if (Db == NULL) {
+        fclose(fp);
+        return;
+    }
+
+    Db->tableTypeTable = createTable();
+    Db->surfaceMaterialTable = createTable();
+    Db->structuralMaterialTable = createTable();
+    Db->neighborhoodTable = createNeighbourhoodTable();
+    Db->picnicTableTable = createPicnicTable();
+    Db->lineEnding = NULL;
+
+    char line[1000];
+    int picTableID = 0; // to be incremented for picnic table entries
+
+    while (fgets(line, sizeof(line), fp) != NULL) {
+        
+        if (strncmp(line, "Id,", 3) == 0) continue; // if line = header, skip it
+
+        char siteIDStr[45], type[45], surface[45], structural[45];
+        char street[100], nhoodIDStr[45], neighborhoodName[100];
+        char ward[45], latitude[45], longitude[45], location[200];
+
+        char *ptr = line;
+        ptr = fieldParser(ptr, siteIDStr,        sizeof(siteIDStr));
+        ptr = fieldParser(ptr, type,             sizeof(type));
+        ptr = fieldParser(ptr, surface,          sizeof(surface));
+        ptr = fieldParser(ptr, structural,       sizeof(structural));
+        ptr = fieldParser(ptr, street,           sizeof(street));
+        ptr = fieldParser(ptr, nhoodIDStr,       sizeof(nhoodIDStr));
+        ptr = fieldParser(ptr, neighborhoodName, sizeof(neighborhoodName));
+        ptr = fieldParser(ptr, ward,             sizeof(ward));
+        ptr = fieldParser(ptr, latitude,         sizeof(latitude));
+        ptr = fieldParser(ptr, longitude,        sizeof(longitude));
+        ptr = fieldParser(ptr, location,         sizeof(location));
+
+        // inserts into lookup tables
+        int tableTypeID = lookupTableID(Db->tableTypeTable, type);
+        if (tableTypeID == -1) {
+            tableTypeID = insertToTable(Db->tableTypeTable, type);
+        }
+
+        int surfaceMaterialID = lookupTableID(Db->surfaceMaterialTable, surface);
+        if (surfaceMaterialID == -1) {
+            surfaceMaterialID = insertToTable(Db->surfaceMaterialTable, surface);
+        }
+
+        int structuralMaterialID = lookupTableID(Db->structuralMaterialTable, structural);
+        if (structuralMaterialID == -1) {
+            structuralMaterialID = insertToTable(Db->structuralMaterialTable, structural);
+        }
+
+        int nhoodID = atoi(nhoodIDStr);
+        int neighbourhoodID = lookupNeighbourhood(Db->neighborhoodTable, nhoodID, neighborhoodName);
+        if (neighbourhoodID == -1) {
+            neighbourhoodID = insertToNeighbourhoodTable(Db->neighborhoodTable, nhoodID, neighborhoodName);
+        }
+
+        PicnicTableEntry entry;
+        entry.tableID              = picTableID++;      
+        entry.siteID               = atoi(siteIDStr); // CSV Id column
+        entry.tableTypeID          = tableTypeID;
+        entry.surfaceMaterialID    = surfaceMaterialID;
+        entry.structuralMaterialID = structuralMaterialID;
+        entry.neighbourhoodID      = nhoodID;
+
+        entry.neighborhoodName = malloc(strlen(neighborhoodName) + 1);
+        if (entry.neighborhoodName == NULL) { fclose(fp); return; }
+        strcpy(entry.neighborhoodName, neighborhoodName);
+
+        entry.ward = malloc(strlen(ward) + 1);
+        if (entry.ward == NULL) { fclose(fp); return; }
+        strcpy(entry.ward, ward);
+
+        entry.latitude = malloc(strlen(latitude) + 1);
+        if (entry.latitude == NULL) { fclose(fp); return; }
+        strcpy(entry.latitude, latitude);
+
+        entry.longitude = malloc(strlen(longitude) + 1);
+        if (entry.longitude == NULL) { fclose(fp); return; }
+        strcpy(entry.longitude, longitude);
+
+        entry.location = malloc(strlen(location) + 1);
+        if (entry.location == NULL) { fclose(fp); return; }
+        strcpy(entry.location, location);
+
+        entry.street = malloc(strlen(street) + 1);
+        if (entry.street == NULL) { fclose(fp); return; }
+        strcpy(entry.street, street);
+
+        if (insertToPicnicTable(Db->picnicTableTable, &entry) == -1) {
+            printf("Failed to insert picnic table entry\n");
+            fclose(fp);
+            return;
+        }
+    }
+
+    fclose(fp);
+}
+
+void exportDB(char *fileName) {
+    int i;
+    FILE *fp = fopen(fileName, "wb"); // binary mode to preserve
+    if (fp == NULL) {
+        printf("Could not write to file \n");
+        return;
+    }
+
+    fprintf(fp, "Id,Table Type,Surface Material,Structural Material,Street / Avenue,Neighbourhood Id,Neighbourhood Name,Ward,Latitude,Longitude,Location\r\n");
+
+    for (i = 0; i < Db->picnicTableTable->size; i++) {
+        PicnicTableEntry *exp = &Db->picnicTableTable->entries[i];
+        const char *tableType          = lookupTableName(Db->tableTypeTable,           exp->tableTypeID);
+        const char *surfaceMaterial    = lookupTableName(Db->surfaceMaterialTable,     exp->surfaceMaterialID);
+        const char *structuralMaterial = lookupTableName(Db->structuralMaterialTable,  exp->structuralMaterialID);
+
+        fprintf(fp, "%d,%s,%s,%s,%s,%d,%s,%s,%s,%s,\"%s\"\r\n",
+            exp->siteID,
+            tableType          ? tableType          : "", // if NULL
+            surfaceMaterial    ? surfaceMaterial    : "", // print empty
+            structuralMaterial ? structuralMaterial : "", // string instead
+            exp->street,
+            exp->neighbourhoodID,
+            exp->neighborhoodName,
+            exp->ward,
+            exp->latitude,
+            exp->longitude,
+            exp->location);
+    }
+    fclose(fp);
+}
+
+void freeDB(void) {
+    int i;
+
+    if (Db == NULL) return;
+
+    if (Db->tableTypeTable != NULL) {
+        for (i = 0; i < Db->tableTypeTable->size; i++) {
+            free(Db->tableTypeTable->entries[i].type);
+        }
+        free(Db->tableTypeTable->entries);
+        free(Db->tableTypeTable);
+    }
+
+    if (Db->surfaceMaterialTable != NULL) {
+        for (i = 0; i < Db->surfaceMaterialTable->size; i++) {
+            free(Db->surfaceMaterialTable->entries[i].type);
+        }
+        free(Db->surfaceMaterialTable->entries);
+        free(Db->surfaceMaterialTable);
+    }
+
+    if (Db->structuralMaterialTable != NULL) {
+        for (i = 0; i < Db->structuralMaterialTable->size; i++) {
+            free(Db->structuralMaterialTable->entries[i].type);
+        }
+        free(Db->structuralMaterialTable->entries);
+        free(Db->structuralMaterialTable);
+    }
+
+    if (Db->neighborhoodTable != NULL) {
+        for (i = 0; i < Db->neighborhoodTable->size; i++) {
+            free(Db->neighborhoodTable->entries[i].nname);
+        }
+        free(Db->neighborhoodTable->entries);
+        free(Db->neighborhoodTable);
+    }
+
+    if (Db->picnicTableTable != NULL) {
+        for (i = 0; i < Db->picnicTableTable->size; i++) {
+            free(Db->picnicTableTable->entries[i].neighborhoodName);
+            free(Db->picnicTableTable->entries[i].ward);
+            free(Db->picnicTableTable->entries[i].latitude);
+            free(Db->picnicTableTable->entries[i].longitude);
+            free(Db->picnicTableTable->entries[i].location);
+            free(Db->picnicTableTable->entries[i].street);
+        }
+        free(Db->picnicTableTable->entries);
+        free(Db->picnicTableTable);
+    }
+
+    free(Db);
+    Db = NULL;
+}
