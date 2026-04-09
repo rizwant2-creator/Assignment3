@@ -157,6 +157,17 @@ int insertToNeighbourhoodTable(NeighbourhoodTable *nt, int id, const char *name)
     return id;
 }
 
+//lookup picnic entry by tableID. Returns pointer to entry, or NULL if not found.
+PicnicTableEntry *lookupPicnicEntry(PicnicTable *pt, int tableID){
+    int i;
+    for (i = 0; i < pt->size; i++){
+        if (pt->entries[i].tableID == tableID){
+            return &pt->entries[i];
+        }
+    }
+    return NULL;
+}
+
 //insertion helpers for PicnicTable. Returns the id of the inserted entry, or -1 on failure.
 int insertToPicnicTable(PicnicTable *pt, PicnicTableEntry *entry){
 

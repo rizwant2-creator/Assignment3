@@ -232,6 +232,37 @@ int countEntries(char *memberName, char * value){
     return count;
 }
 
+void editTableEntry(int tableID, char *memberName, char *value) {
+    if (Db == NULL) return;
+
+    PicnicTableEntry *entry = lookupPicnicEntry(Db->picnicTableTable, tableID);
+    if (entry == NULL) {
+        printf("No entry found with tableID %d\n", tableID);
+        return;
+    }
+
+    if (strcmp(memberName, "table type") == 0) {
+        int id = lookupTableID(Db->tableTypeTable, value);
+        if (id == -1) {
+            id = insertToTable(Db->tableTypeTable, value);
+        }
+        entry->tableTypeID = id;
+    }
+    else if (strcmp(memberName, "surface material") == 0) {
+        int id = lookupTableID(Db->surfaceMaterialTable, value);
+        if (id == -1) {
+            id = insertToTable(Db->surfaceMaterialTable, value);
+        }
+        entry->surfaceMaterialID = id;
+    }
+    else if (strcmp(memberName, "structural material") == 0) {
+        int id = lookupTableID(Db->structuralMaterialTable, value);
+        if (id == -1) {
+            id = insertToTable(Db->structuralMaterialTable, value);
+        }
+        entry->structuralMaterialID = id;
+}}
+
 void freeDB(void) {
     int i;
 

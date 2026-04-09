@@ -35,4 +35,7 @@ int insertToTable(Table *t, const char *name);
 int insertToNeighbourhoodTable(NeighbourhoodTable *nt, int id, const char *name);
 int insertToPicnicTable(PicnicTable *pt, PicnicTableEntry *entry);
 
+//picnic table entry lookup by tableID
+PicnicTableEntry *lookupPicnicEntry(PicnicTable *pt, int tableID);
+
 #endif
