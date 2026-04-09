@@ -178,6 +178,60 @@ void exportDB(char *fileName) {
     fclose(fp);
 }
 
+int countEntries(char *memberName, char * value){
+    int i;
+    int count = 0;
+    int id;
+
+    if (strcmp(memberName, "table type") == 0){
+        id = lookupTableID(Db->tableTypeTable, value); //convert text value to lookup table id
+        for (i = 0; i < Db->picnicTableTable->size; i++){
+            if (Db->picnicTableTable->entries[i].tableTypeID == id){
+                count++;
+            }
+        }
+    }
+    else if (strcmp(memberName, "surface material") == 0){
+        id = lookupTableID(Db->surfaceMaterialTable, value);
+        for (i = 0; i < Db->picnicTableTable->size; i++){
+            if (Db->picnicTableTable->entries[i].surfaceMaterialID == id){
+                count++;
+            }
+        }
+    }
+    else if (strcmp(memberName, "structural material") == 0){
+        id = lookupTableID(Db->structuralMaterialTable, value);
+        for (i = 0; i < Db->picnicTableTable->size; i++){
+            if (Db->picnicTableTable->entries[i].structuralMaterialID == id){
+                 count++;
+            }
+        }
+    }
+    else if (strcmp(memberName, "neighbourhood id") == 0){
+        id = atoi(value); //convert string value to integer id
+        for (i = 0; i < Db->picnicTableTable->size; i++){
+            if (Db->picnicTableTable->entries[i].neighbourhoodID == id){
+                count++;
+            }
+        }
+    }
+    else if (strcmp(memberName, "neighbourhood name") == 0){
+        for (i = 0; i < Db->picnicTableTable->size; i++){
+            if (strcmp(Db->picnicTableTable->entries[i].neighborhoodName, value) == 0){
+                count++;
+            }
+        }
+    }
+    else if (strcmp(memberName, "ward") == 0){
+        for (i = 0; i < Db->picnicTableTable->size; i++){
+            if(strcmp(Db->picnicTableTable->entries[i].ward, value) == 0){ //compare ward string directly
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
 void freeDB(void) {
     int i;
 
