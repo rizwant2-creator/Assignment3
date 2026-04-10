@@ -16,6 +16,9 @@
 
 DataBase *Db = NULL;
 
+
+
+
 // Parse one CSV field from src into buffer
 static char *fieldParser(char *src, char *buffer, int buffSize) {
     int i = 0;
@@ -261,7 +264,8 @@ void editTableEntry(int tableID, char *memberName, char *value) {
             id = insertToTable(Db->structuralMaterialTable, value);
         }
         entry->structuralMaterialID = id;
-}}
+    }
+}
 
 // Comparison function for qsort
 static int compare(const void *a, const void *b) {
@@ -342,6 +346,82 @@ void reportByWard() {
                     e->street, e->neighbourhoodID, e->neighborhoodName,
                     e->ward, e->latitude, e->longitude, e->location,
                     e->tableID);}  
+        }
+    }
+}
+
+void sortByMember(char *memberName)
+{
+    PicnicTableEntry key;
+    PicnicTableEntry *left;
+    int compare;
+    if (Db == NULL)
+    {
+        return;
+    }
+    else
+    {
+        if (Db->picnicTableTable == NULL)
+        {
+            return;
+        }
+        if (memberName == NULL)
+        {
+            return;
+        }
+        for (int i = 1; i< Db->picnicTableTable->size; i++)
+        {
+            key = Db->picnicTableTable->entries[i];
+            int j= i-1;
+            while (j>=0)
+            {
+                left = &Db->picnicTableTable->entries[j];
+                if (strcmp(memberName,"TT")== 0)
+                {
+                    compare = strcmp(lookupTableName(Db->tableTypeTable,left->tableTypeID),lookupTableName(Db->tableTypeTable,key.tableTypeID));
+
+                }
+                else if (strcmp(memberName,"SM")==0)
+                {
+                    compare = strcmp(lookupTableName(Db->surfaceMaterialTable,left->surfaceMaterialID),lookupTableName(Db->surfaceMaterialTable,key.surfaceMaterialID));
+
+                }
+                else if (strcmp(memberName,"StM")== 0)
+                {
+                    compare = strcmp(lookupTableName(Db->structuralMaterialTable,left->structuralMaterialID),lookupTableName(Db->structuralMaterialTable,key.structuralMaterialID));
+
+
+                }
+                else if (strcmp(memberName,"NID")== 0)
+                {
+                    if (left->neighbourhoodID<key.neighbourhoodID)
+                    {
+                        compare =-1;
+                    }
+                    else if (left->neighbourhoodID>key.neighbourhoodID)
+                    {
+                        compare =1;
+                    }
+
+
+                }
+                else if(strcmp(memberName,"NN")==0)
+                {
+                   compare = strcmp(lookupNeighbourhoodName(Db->neighborhoodTable,left->neighbourhoodID),lookupNeighbourhoodName(Db->neighborhoodTable,key.neighbourhoodID));
+
+                }
+                else if (strcmp(memberName,"W")== 0)
+                {
+                    compare = strcmp(left->ward,key.ward);
+                }
+                if (compare<=0)
+                {
+                    break;
+                }
+                Db->picnicTableTable->entries[j+1] = Db->picnicTableTable->entries[j];
+                j--;
+            }
+            Db->picnicTableTable->entries[j+1] = key;
         }
     }
 }
