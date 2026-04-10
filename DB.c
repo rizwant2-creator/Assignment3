@@ -263,6 +263,89 @@ void editTableEntry(int tableID, char *memberName, char *value) {
         entry->structuralMaterialID = id;
 }}
 
+// Comparison function for qsort
+static int compare(const void *a, const void *b) {
+    return strcmp((const char *)a, (const char *)b);
+}
+
+void reportByNeighbourhood() {
+    int i, j;
+    int n = Db->picnicTableTable->size;
+    char nhoods[500][100]; // assuming (max) 500 unique neighbourhoods & 100 chars for each name
+    int unique_nhoods = 0;
+
+    for (i = 0; i < n; i++) {
+        char *name = Db->picnicTableTable->entries[i].neighborhoodName;
+        for (j = 0; j < unique_nhoods; j++) {
+            if (strcmp(nhoods[j], name) == 0) {
+                break;
+            }
+        }
+        // if we reached the end of nhoods without a match
+        if (j == unique_nhoods) {
+            strncpy(nhoods[unique_nhoods], name, 99);
+            unique_nhoods++;}
+    }
+
+    // sorts the array (in ascending order by neighborhood name)
+    qsort(nhoods, unique_nhoods, sizeof(nhoods[0]), compare);
+
+    for (i = 0; i < unique_nhoods; i++) {
+        printf("%s\n", nhoods[i]);
+        for (j = 0; j < n; j++) {
+            PicnicTableEntry *e = &Db->picnicTableTable->entries[j];
+            if (strcmp(e->neighborhoodName, nhoods[i]) == 0) {
+                printf("%d,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s,%d\n",
+                    e->siteID,
+                    lookupTableName(Db->tableTypeTable, e->tableTypeID),
+                    lookupTableName(Db->surfaceMaterialTable, e->surfaceMaterialID),
+                    lookupTableName(Db->structuralMaterialTable, e->structuralMaterialID),
+                    e->street, e->neighbourhoodID, e->neighborhoodName,
+                    e->ward, e->latitude, e->longitude, e->location,
+                    e->tableID);}  
+            }
+    }
+}
+
+void reportByWard() {
+    int i, j;
+    int n = Db->picnicTableTable->size;
+    char all_wards[500][100];
+    int unique_wards = 0;
+
+    for (i = 0; i < n; i++) {
+        char *ward = Db->picnicTableTable->entries[i].ward;
+        for (j = 0; j < unique_wards; j++) {
+            if (strcmp(all_wards[j], ward) == 0) {
+                break; }
+        }
+        // if we reached the end of all_wards without a match
+        if (j == unique_wards) {
+            strncpy(all_wards[unique_wards], ward, 99);
+            unique_wards++;
+        }
+    }
+
+    // sorts the array (in ascending order by ward name)
+    qsort(all_wards, unique_wards, sizeof(all_wards[0]), compare);
+
+    for (i = 0; i < unique_wards; i++) {
+        printf("%s\n", all_wards[i]);
+        for (j = 0; j < n; j++) {
+            PicnicTableEntry *e = &Db->picnicTableTable->entries[j];
+            if (strcmp(e->ward, all_wards[i]) == 0) {
+                printf("%d,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s,%d\n",
+                    e->siteID,
+                    lookupTableName(Db->tableTypeTable, e->tableTypeID),
+                    lookupTableName(Db->surfaceMaterialTable, e->surfaceMaterialID),
+                    lookupTableName(Db->structuralMaterialTable, e->structuralMaterialID),
+                    e->street, e->neighbourhoodID, e->neighborhoodName,
+                    e->ward, e->latitude, e->longitude, e->location,
+                    e->tableID);}  
+        }
+    }
+}
+
 void freeDB(void) {
     int i;
 
