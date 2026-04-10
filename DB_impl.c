@@ -183,3 +183,64 @@ int insertToPicnicTable(PicnicTable *pt, PicnicTableEntry *entry){
     pt->size++;
     return entry->tableID;
 }
+
+void convertToBitField(FILE* file,uint32_t value)
+{
+    fwrite(&value,sizeof(uint32_t),1,file);
+}
+void compressDB(char *fileName)
+{
+
+    FILE *file;
+    PicnicTableEntry* entry;
+    if (Db == NULL || fileName == NULL)
+    {
+        return;
+    }
+    file = fopen(fileName,'wb');
+    if (file == NULL)
+    {
+        return;
+    }
+    convertToBitField(file,(uint32_t)Db->tableTypeTable->size);
+    convertToBitField(file,(uint32_t)Db->surfaceMaterialTable->size);
+    convertToBitField(file,(uint32_t)Db->structuralMaterialTable->size);
+    convertToBitField(file,(uint32_t)Db->neighborhoodTable->size);
+    convertToBitField(file,(uint32_t)Db->picnicTableTable->size);
+    
+    uint32_t len = (uint32_t) strlen("\n");
+    convertToBitField(file,len);
+    fwrite("\n",1,len,file);
+    for (int i=0;i<Db->tableTypeTable->size;i++)
+    {
+        convertToBitField(file,(uint32_t)Db->tableTypeTable->entries[i].id);
+        len = (uint32_t) strlen(Db->tableTypeTable->entries[i].type);
+        convertToBitField(file,len);
+        fwrite(Db->tableTypeTable->entries[i].type,1,len,file);
+    }
+    for (int i=0;i<Db->surfaceMaterialTable->size;i++)
+    {
+        convertToBitField(file,(uint32_t)Db->surfaceMaterialTable->entries[i].id);
+        len = (uint32_t) strlen(Db->surfaceMaterial->entries[i].type);
+        convertToBitField(file,len);
+        fwrite(Db->surfaceMaterial->entries[i].type,1,len,file);
+    }
+    for (int i=0;i<Db->structuralMaterialTable->size;i++)
+    {
+        convertToBitField(file,(uint32_t)Db->structuralMaterialTable->entries[i].id);
+        len = (uint32_t) strlen(Db->structuralMaterial->entries[i].type);
+        convertToBitField(file,len);
+        fwrite(Db->structuralMaterial->entries[i].type,1,len,file);
+    }
+    for (int i=0;i<Db->neighborhoodTable->size;i++)
+    {
+        convertToBitField(file,(uint32_t)Db->neighborhoodTable->entries[i].id);
+        len = (uint32_t) strlen(Db->neighborhoodTable->entries[i].type);
+        convertToBitField(file,len);
+        fwrite(Db->neighborhoodTable->entries[i].type,1,len,file);
+    }
+    for (int i=0;i<Db->picnicTableTable->size;i++)
+    {
+        //finish for picnic table
+    }
+}

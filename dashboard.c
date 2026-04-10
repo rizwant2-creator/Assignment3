@@ -34,7 +34,7 @@ int main(int argc, char *argv[]){
     else if(strcmp(argv[1],"-b")==0)
     {
         // read the binary file
-        importDBBinary(argv[2]);
+        // importDBBinary(argv[2]);
     }   
     else
     {
@@ -157,10 +157,10 @@ int main(int argc, char *argv[]){
             getchar();
 
             if (criteria == 1){
-                //neighbourhood report
+                reportByNeighbourhood();//neighbourhood report
             }
             else if (criteria == 2){
-                //ward report
+               reportByWard(); //ward report
             }
             else {
                 printf("Invalid option\n");
