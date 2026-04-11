@@ -34,7 +34,7 @@ int main(int argc, char *argv[]){
     else if(strcmp(argv[1],"-b")==0)
     {
         // read the binary file
-        importDBBinary(argv[2]);
+        // importDBBinary(argv[2]);
     }   
     else
     {
@@ -51,17 +51,18 @@ int main(int argc, char *argv[]){
     char memberName[100];
 
     do{
-        printf("1. Export Database\n");
+        printf("\n1. Export Database\n");
         printf("2. Count Entries\n");
         printf("3. Sort By\n");
         printf("4. Edit Entry\n");
         printf("5. Report\n");
         printf("6. Compress database\n");
-        printf("7. Exit\n");
+        printf("7. Exit\n\n");
         printf("option: ");
         scanf("%d", &option);
         getchar();
-
+        
+        printf("\n");
         if (option == 1){
             printf("Enter a filename: ");
             fgets(fileName, sizeof(fileName), stdin);
@@ -71,7 +72,7 @@ int main(int argc, char *argv[]){
             exportDB(fileName);
         }
         else if (option == 2){
-            printf("Enter member code (1.TT 2.SM 3.StM 4.NID 5.NN 6.W): ");
+            printf("\nEnter member code (1.TT 2.SM 3.StM 4.NID 5.NN 6.W): ");
             scanf("%d", &memberCode);
             getchar();
 
@@ -134,21 +135,35 @@ int main(int argc, char *argv[]){
             }
 
         }
-        else if (option == 4){ //edit entry
-            int tableID;
-            printf("Enter a numerical table entry to edit: ");
-            scanf("%d", &tableID);
+        else if (option == 4){ 
+            //edit entry
+            int siteID;
+            printf("\nEnter a numerical table entry to edit: ");
+            scanf("%d", &siteID);
             getchar();
 
-            printf("Enter member code (1.TT 2.SM 3.StM: ");
+            printf("\nEnter member code (1.TT 2.SM 3.StM: ");
             scanf("%d", &memberCode);
             getchar();
 
-            printf("Enter Value: ");
+            printf("\nEnter Value: ");
             fgets(value, sizeof(value), stdin);
             if (value[strlen(value) - 1] == '\n'){
                 value[strlen(value) - 1] = '\0';
-            }     
+            }
+
+            if (memberCode == 1){
+                editTableEntry(siteID, "table type", value);
+            }
+            else if (memberCode == 2){
+                editTableEntry(siteID, "surface material", value);
+            }
+            else if (memberCode == 3){
+                editTableEntry(siteID, "structural material", value);
+            }
+            else {
+                printf("Invalid member\n");
+            }
         }
         else if (option == 5){ //report
             int criteria;
@@ -158,12 +173,14 @@ int main(int argc, char *argv[]){
 
             if (criteria == 1){
                 //neighbourhood report
+                reportByNeighbourhood();
             }
             else if (criteria == 2){
                 //ward report
+                reportByWard();
             }
             else {
-                printf("Invalid option\n");
+                printf("Invalid criteria\n");
             }
         }
         else if (option == 6){ //compress
