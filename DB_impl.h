@@ -39,4 +39,8 @@ int insertToPicnicTable(PicnicTable *pt, PicnicTableEntry *entry);
 PicnicTableEntry *lookupPicnicEntry(PicnicTable *pt, int tableID);
 PicnicTableEntry *lookupPicnicTBySiteID(PicnicTable *pt, int siteID);
 
+void convertToBitField(FILE* file,uint32_t value);
+void compressDB(char *fileName);
+
+
 #endif
