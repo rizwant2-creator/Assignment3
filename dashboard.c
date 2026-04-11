@@ -12,8 +12,9 @@
 //You may include other original headers as you see fit
 #include "DB.h"
 #include "DB_impl.h"
-#include <stdio.h>
+
 #include <string.h>
+
 
 int main(int argc, char *argv[]){
 
@@ -173,7 +174,7 @@ int main(int argc, char *argv[]){
                 fileName[strlen(fileName) - 1] = '\0';
             }
 
-            //compress database
+            compressDB(fileName);//compress database
         }
         else if (option != 7){
             printf("Invalid option\n");

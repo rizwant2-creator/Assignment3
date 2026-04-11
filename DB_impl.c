@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 Table *createTable(void){ //create empty lookup table
     Table *t = malloc(sizeof(Table));
@@ -241,6 +242,29 @@ void compressDB(char *fileName)
     }
     for (int i=0;i<Db->picnicTableTable->size;i++)
     {
-        //finish for picnic table
+        entry = &Db->picnicTableTable->entries[i];
+        convertToBitField(file,(uint32_t) entry->tableID);
+        convertToBitField(file,(uint32_t) entry->siteID);
+        convertToBitField(file,(uint32_t) entry->tableTypeID);
+        convertToBitField(file,(uint32_t) entry->surfaceMaterialID);
+        convertToBitField(file,(uint32_t) entry->structuralMaterialID);
+        len = (uint32_t) strlen(entry->street);
+        convertToBitField(file,len);
+        fwrite(entry->street,1,len,file);
+        convertToBitField(file,(uint32_t) entry->neighbourhoodID);
+        len = (uint32_t) strlen(entry->ward);
+        convertToBitField(file,len);
+        fwrite(entry->ward,1,len,file);
+        len = (uint32_t) strlen(entry->latitude);
+        convertToBitField(file,len);
+        fwrite(entry->latitude,1,len,file);
+        len = (uint32_t) strlen(entry->longitude);
+        convertToBitField(file,len);
+        fwrite(entry->longitude,1,len,file);
+        len = (uint32_t) strlen(entry->location);
+        convertToBitField(file,len);
+        fwrite(entry->location,1,len,file);
+
     }
+    fclose(file);
 }
