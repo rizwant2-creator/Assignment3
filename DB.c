@@ -232,12 +232,12 @@ int countEntries(char *memberName, char * value){
     return count;
 }
 
-void editTableEntry(int tableID, char *memberName, char *value) {
+void editTableEntry(int siteID, char *memberName, char *value) {
     if (Db == NULL) return;
 
-    PicnicTableEntry *entry = lookupPicnicEntry(Db->picnicTableTable, tableID);
+    PicnicTableEntry *entry = lookupPicnicTBySiteID(Db->picnicTableTable, siteID);
     if (entry == NULL) {
-        printf("No entry found with tableID %d\n", tableID);
+        printf("No entry found for site ID %d\n", siteID);
         return;
     }
 
@@ -295,15 +295,14 @@ void reportByNeighbourhood() {
         for (j = 0; j < n; j++) {
             PicnicTableEntry *e = &Db->picnicTableTable->entries[j];
             if (strcmp(e->neighborhoodName, nhoods[i]) == 0) {
-                printf("%d,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s,%d\n",
+                printf("%d,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s\n\n",
                     e->siteID,
                     lookupTableName(Db->tableTypeTable, e->tableTypeID),
                     lookupTableName(Db->surfaceMaterialTable, e->surfaceMaterialID),
                     lookupTableName(Db->structuralMaterialTable, e->structuralMaterialID),
                     e->street, e->neighbourhoodID, e->neighborhoodName,
-                    e->ward, e->latitude, e->longitude, e->location,
-                    e->tableID);}  
-            }
+                    e->ward, e->latitude, e->longitude, e->location);}  
+        }
     }
 }
 
@@ -334,14 +333,13 @@ void reportByWard() {
         for (j = 0; j < n; j++) {
             PicnicTableEntry *e = &Db->picnicTableTable->entries[j];
             if (strcmp(e->ward, all_wards[i]) == 0) {
-                printf("%d,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s,%d\n",
+                printf("%d,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s\n\n",
                     e->siteID,
                     lookupTableName(Db->tableTypeTable, e->tableTypeID),
                     lookupTableName(Db->surfaceMaterialTable, e->surfaceMaterialID),
                     lookupTableName(Db->structuralMaterialTable, e->structuralMaterialID),
                     e->street, e->neighbourhoodID, e->neighborhoodName,
-                    e->ward, e->latitude, e->longitude, e->location,
-                    e->tableID);}  
+                    e->ward, e->latitude, e->longitude, e->location);}  
         }
     }
 }

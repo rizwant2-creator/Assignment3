@@ -110,7 +110,7 @@ const char *lookupNeighbourhoodName(NeighbourhoodTable *nt, int id){
     return NULL;
 }
 
-//insertion helpers for Table. Returns the id of the inserted entry, or -1 on failure.
+//insertion helpers for Table. 
 int insertToTable(Table *t, const char *name){
 
     if (t->size >= t->capacity){
@@ -135,7 +135,7 @@ int insertToTable(Table *t, const char *name){
     return newEntryid;
 }
 
-//insertion helpers for NeighbourhoodTable. Returns the id of the inserted entry, or -1 on failure.
+//insertion helpers for NeighbourhoodTable.
 int insertToNeighbourhoodTable(NeighbourhoodTable *nt, int id, const char *name){
 
     if (nt->size >= nt->capacity){
@@ -157,7 +157,7 @@ int insertToNeighbourhoodTable(NeighbourhoodTable *nt, int id, const char *name)
     return id;
 }
 
-//lookup picnic entry by tableID. Returns pointer to entry, or NULL if not found.
+//lookup picnic entry by tableID.
 PicnicTableEntry *lookupPicnicEntry(PicnicTable *pt, int tableID){
     int i;
     for (i = 0; i < pt->size; i++){
@@ -168,7 +168,18 @@ PicnicTableEntry *lookupPicnicEntry(PicnicTable *pt, int tableID){
     return NULL;
 }
 
-//insertion helpers for PicnicTable. Returns the id of the inserted entry, or -1 on failure.
+//lookup picnic entry by siteID.
+PicnicTableEntry *lookupPicnicTBySiteID(PicnicTable *pt, int siteID){
+    int i;
+    for (i = 0; i < pt->size; i++){
+        if (pt->entries[i].siteID == siteID){
+            return &pt->entries[i];
+        }
+    }
+    return NULL;
+}
+
+//insertion helpers for PicnicTable.
 int insertToPicnicTable(PicnicTable *pt, PicnicTableEntry *entry){
 
     if (pt->size >= pt->capacity){
