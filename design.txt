@@ -1,0 +1,164 @@
+DESIGN DOCUMENT
+Assignment 3 - Picnic Table Database
+Authors: Taha Rizwan, Marc Seme, Rebecca Nguyen
+Course: CMPT 201
+Instructor: Dara Wagh
+Lab Instructor: Hanan Saleh
+===============================================================
+
+
+1. What does the program do?
+-----------------------------
+This program reads a CSV file containing Edmonton picnic table data
+and loads it into a database. The database supports importing,
+exporting, counting, sorting, editing, and generating reports on
+picnic table entries. All memory is dynamically allocated and properly
+freed before the program exits, as required by the assignment
+specifications.
+
+
+2. DATA STRUCTURE DESIGN
+------------------------
+
+Why Dynamic Arrays Instead of Linked Lists?:
+  All of our tables (Table, NeighbourhoodTable, and PicnicTable) are
+  implemented using dynamic arrays. Each array starts at INIT_SIZE
+  and doubles in capacity with realloc whenever it becomes full.
+
+  We chose dynamic arrays over linked lists because many operations
+  require lookup by ID or index. With a linked list, that would mean
+  repeated traversal, which would be less efficient. Also, since the
+  upper bound of the dataset is known ahead of time, dynamic arrays
+  made more sense for this assignment.
+
+Why Not Use Lookup Tables for Every Column?:
+  We only used lookup tables for fields that repeat often enough to
+  make it worthwhile. Fields such as ward, latitude,
+  longitude, location, and street are either unique or do not repeat
+  frequently enough to justify a lookup table.
+
+  In those cases, using lookup tables would not really save space,
+  since the lookup table would end up being almost as large as the
+  original data itself.
+
+
+3. IMPLEMENTATION DECISIONS
+---------------------------
+
+fieldParser() - Custom CSV Parser:
+  We wrote a custom Parser() function to handle CSV
+  fields that contain commas inside quotation marks.
+
+  The function first checks whether a field begins with a quote. If
+  it does, it keeps reading until it finds the matching closing quote,
+  ignoring commas inside the quoted text. For unquoted fields, it
+  reads until it finds a comma or newline.
+
+importDB() - Single Pass Import:
+  The assignment requires all five tables to be populated in a single
+  pass through the file, meaning each line can only be read once.
+
+  We achieved this using a lookup-before-insert approach. For each
+  normalized field, we first check whether the value already exists
+  in its lookup table. If it does, we reuse the existing ID. If not,
+  we insert it and assign it the next available ID.
+
+exportDB() - Binary Mode with Explicit Line Endings:
+  Getting the exported CSV file to exactly match the original required
+  some research.
+
+  The original file used Windows-style line endings (CRLF, or \r\n),
+  but on Linux, opening a file in text mode produced Unix-style line
+  endings (LF, or \n). This caused multiple diffs to fail even when the content
+  was identical.
+
+  To solve this, we opened the output file in binary mode ("wb") and
+  explicitly wrote \r\n at the end of each line. This produced a true
+  1:1 copy of the original file.
+
+lookupPicnicEntry() - Helper Function in DB_impl.c:
+  The editTableEntry() function needs to locate a PicnicTableEntry by
+  its table ID. Rather than repeating the same search logic inside
+  DB.c, we created a helper function called lookupPicnicEntry() in
+  DB_impl.c. This function loops through the picnic table and returns a pointer
+  to the entry (or NULL if no match is found).
+
+editTableEntry():
+  According to the assignment specification, only a few fields
+  can be edited. When one of these values is edited, the new value is first looked up
+  in the related table. If it is not already present, it is
+  inserted. The ID in the picnic table entry is then updated to point to the new value.
+
+sortByMember() - Insertion Sort:
+  We used insertion sort to sort the picnic table in place based on a
+  given member name.
+
+  The member is identified using short codes such as "TT" for Table
+  Type or "W" for Ward. For normalized fields, the sort compares the
+  resolved string values returned by lookupTableName(). For direct
+  string fields such as ward and neighbourhood name, it compares the
+  strings themselves.
+
+reportByNeighbourhood() and reportByWard():
+  To do this, each name is checked against the names already collected.
+  After all unique names are gathered, the array is sorted using qsort
+  and strcmp. Then, for each sorted group name, the picnic table is
+  scanned again and matching entries are printed.
+
+  We chose a 2D character array instead of an array of char * pointers
+  to avoid extra pointer complexity. We used 500 as the max size after 
+  confirming that the number of unique neighbourhood names is well below 250,
+  so 500 seemed like a safe ceiling.
+
+ createTable design:
+ - The create table functions use dynamic memory allocation for the table structure and the entries array
+ - Each allocates INIT_SIZE entries initially
+ - If the first malloc fails it returns NULL right after
+ - If the second fails, free the first allocation before NULL to prevent memory leaks 
+ - Dynamic allocation supports table groth during imported
+ - Issues:
+    - One issue was handling the double malloc failure
+      - A solution for this was to ensure structure freed if entries allocation fails before retuning NULL
+    - Another issue was testing cleanup
+      - The solution was adding free(table->entries) then free(table) for each test
+  
+  Lookup Helper design:
+  - The lookup functions use linear search through the table entries 
+  - lookupTableName scans Table->entries and returns type string where the id matches 
+  - lookupNeighbourhoodName scanes NeighbourhoodTable->entries and returns name string where the id matches 
+  - Both return NULL when no matching id is found 
+  - This design was chosen because it matches the dynamic array storage 
+  - Linear search works well for the small lookup table sizes 
+  - Issues:
+    - One issue during testing with correct table type id since ids are assigned dynamically during import 
+      - The solution was using lookupTableID() furst to get a known id for testing 
+
+
+4. BUGS AND FIXES
+-----------------
+
+Bug: sscanf split the location field at the comma inside the quotes,
+  which shifted all the columns after it and made the data wrong.
+  Fix: We replaced sscanf with our custom fieldParser() that skips
+  commas inside quoted fields.
+
+Bug: The exported CSV kept failing diff even though the content looked
+  right, because Linux was writing \n while the original file used \r\n.
+  Fix: We opened the file in binary mode ("wb") and wrote \r\n manually
+  at the end of every line.
+
+Bug: After merging branches, the code stopped compiling because function
+  names in DB_impl.h were changed and neighborhoodName was removed from
+  PicnicTableEntry.
+  Fix: We restored the correct function names in DB_impl.h and added
+  char *neighborhoodName back into PicnicTableEntry.
+
+Bug: In reportByNeighbourhood(), the strncpy was inside the inner loop
+  so the same neighbourhood name was being added multiple times.
+  Fix: We moved the strncpy outside the loop so it only runs after the
+  loop confirms no match was found.
+
+Bug: The edit function was using tableID to find the entry, which kept
+  returning "member not found" because tableID was not the right key.
+  Fix: We switched to using siteID, which is the unique identifier for
+  each entry.
