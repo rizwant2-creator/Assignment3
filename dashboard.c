@@ -12,7 +12,7 @@
 //You may include other original headers as you see fit
 #include "DB.h"
 #include "DB_impl.h"
-
+#include <stdio.h>
 #include <string.h>
 
 
@@ -113,22 +113,28 @@ int main(int argc, char *argv[]){
             getchar();
 
             if (memberCode == 1){
-                //sort by table type
+                sortByMember("TT");//sort by table type
+                exportDB("table_type.csv");
             }
             else if (memberCode == 2){
-                //sort by surface material
+                sortByMember("SM");//sort by surface material
+                exportDB("surface_material.csv");
             }
             else if (memberCode == 3){
-                //sort by structural material
+                sortByMember("StM");//sort by structural material
+                exportDB("structural_material.csv");
             }
             else if (memberCode == 4){
-                //sort by neighbourhood id
+                sortByMember("NID");//sort by neighbourhood id
+                exportDB("neighbourhood_id.csv");
             }
             else if (memberCode == 5){
-                //sort by neighbourhood name
+                sortByMember("NN");//sort by neighbourhood name
+                exportDB("neighbourhood_name.csv");
             }
             else if (memberCode == 6){
-                //sort by ward
+                sortByMember("W");//sort by ward
+                exportDB("ward.csv");
             }
             else{
                 printf("Invalid member code\n");

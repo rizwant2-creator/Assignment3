@@ -16,7 +16,8 @@
 #ifndef DB_IMPL_H
 #define DB_IMPL_H
 #include "DB.h"
-
+#include <stdint.h>
+#include <stdio.h>
 //table creators
 Table *createTable(void);
 NeighbourhoodTable *createNeighbourhoodTable(void);

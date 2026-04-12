@@ -198,7 +198,7 @@ void compressDB(char *fileName)
     {
         return;
     }
-    file = fopen(fileName,'wb');
+    file = fopen(fileName,"wb");
     if (file == NULL)
     {
         return;
@@ -222,23 +222,23 @@ void compressDB(char *fileName)
     for (int i=0;i<Db->surfaceMaterialTable->size;i++)
     {
         convertToBitField(file,(uint32_t)Db->surfaceMaterialTable->entries[i].id);
-        len = (uint32_t) strlen(Db->surfaceMaterial->entries[i].type);
+        len = (uint32_t) strlen(Db->surfaceMaterialTable->entries[i].type);
         convertToBitField(file,len);
-        fwrite(Db->surfaceMaterial->entries[i].type,1,len,file);
+        fwrite(Db->surfaceMaterialTable->entries[i].type,1,len,file);
     }
     for (int i=0;i<Db->structuralMaterialTable->size;i++)
     {
         convertToBitField(file,(uint32_t)Db->structuralMaterialTable->entries[i].id);
-        len = (uint32_t) strlen(Db->structuralMaterial->entries[i].type);
+        len = (uint32_t) strlen(Db->structuralMaterialTable->entries[i].type);
         convertToBitField(file,len);
-        fwrite(Db->structuralMaterial->entries[i].type,1,len,file);
+        fwrite(Db->structuralMaterialTable->entries[i].type,1,len,file);
     }
     for (int i=0;i<Db->neighborhoodTable->size;i++)
     {
         convertToBitField(file,(uint32_t)Db->neighborhoodTable->entries[i].id);
-        len = (uint32_t) strlen(Db->neighborhoodTable->entries[i].type);
+        len = (uint32_t) strlen(Db->neighborhoodTable->entries[i].nname);
         convertToBitField(file,len);
-        fwrite(Db->neighborhoodTable->entries[i].type,1,len,file);
+        fwrite(Db->neighborhoodTable->entries[i].nname,1,len,file);
     }
     for (int i=0;i<Db->picnicTableTable->size;i++)
     {
