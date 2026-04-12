@@ -12,5 +12,11 @@ DB.o: DB.c DB.h DB_impl.h
 DB_impl.o: DB_impl.c DB.h DB_impl.h
 	$(CC) $(CFLAGS) -c DB_impl.c
 
+test: testing/test
+	./testing/test
+
+testing/test: testing/test.c DB.c DB_impl.c DB.h DB_impl.h
+	$(CC) $(CFLAGS) -o testing/test testing/test.c DB.c DB_impl.c
+
 clean:
-	rm -f *.o dashboard
+	rm -f *.o dashboard testing/test 

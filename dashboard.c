@@ -34,7 +34,7 @@ int main(int argc, char *argv[]){
     else if(strcmp(argv[1],"-b")==0)
     {
         // read the binary file
-        importDBBinary(argv[2]);
+        importDB(argv[2]);
     }   
     else
     {
