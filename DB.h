@@ -19,7 +19,7 @@
  * STRUCTS AS NEEDED.
  */
 
-typedef struct {
+ typedef struct {
     int id;
     char *type;
 } TableEntry;

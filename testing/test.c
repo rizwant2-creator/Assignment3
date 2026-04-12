@@ -135,6 +135,64 @@ int main (void){
         printf("FAIL\n");
     }
 
+    // Test lookupPicnicEntry
+    int firstID = Db->picnicTableTable->entries[0].tableID;
+    PicnicTableEntry *entry;
+
+    printf("lookupPicnicEntry Test: Matching tableID\n");
+    entry = lookupPicnicEntry(Db->picnicTableTable, firstID);
+    if (entry != NULL && entry->tableID == firstID) {
+        printf("PASS\n");
+    } else {
+        printf("FAIL\n");
+    }
+
+    printf("lookupPicnicEntry Test: Non-matching tableID\n");
+    entry = lookupPicnicEntry(Db->picnicTableTable, 999999);
+    if (entry == NULL) {
+        printf("PASS\n");
+    } else {
+        printf("FAIL\n");
+    }
+
+    // Test editTableEntry
+    printf("editTableEntry Test: Valid table type edit\n");
+    editTableEntry(firstID, "table type", "Steel Picnic Table");
+    entry = lookupPicnicEntry(Db->picnicTableTable, firstID);
+    const char *newType = lookupTableName(Db->tableTypeTable, entry->tableTypeID);
+    if (newType != NULL && strcmp(newType, "Steel Picnic Table") == 0) {
+        printf("PASS\n");
+    } else {
+        printf("FAIL\n");
+    }
+
+    printf("editTableEntry Test: New value not in table gets inserted\n");
+    editTableEntry(firstID, "table type", "Completely New Type");
+    entry = lookupPicnicEntry(Db->picnicTableTable, firstID);
+    newType = lookupTableName(Db->tableTypeTable, entry->tableTypeID);
+    if (newType != NULL && strcmp(newType, "Completely New Type") == 0) {
+        printf("PASS\n");
+    } else {
+        printf("FAIL\n");
+    }
+
+    printf("editTableEntry Test: Invalid tableID does not crash\n");
+    editTableEntry(999999, "table type", "Wood Picnic Table");
+    printf("PASS\n");
+
+    printf("editTableEntry Test: Invalid member name does not crash\n");
+    editTableEntry(firstID, "fake member", "some value");
+    printf("PASS\n");
+
+    // Test reportByNeighbourhood and reportByWard
+    printf("reportByNeighbourhood Test: Runs without crashing\n");
+    reportByNeighbourhood();
+    printf("PASS\n");
+
+    printf("reportByWard Test: Runs without crashing\n");
+    reportByWard();
+    printf("PASS\n");
+
     freeDB();
-    return 0; 
+    return 0;
 }

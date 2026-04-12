@@ -18,3 +18,17 @@ countEntries function tests:
 - Non-matching ID test: countEntries("neighbourhood id", "999999999") should return 0
 - Case sensitivity test: countEntries("neighbourhood name", "RoSEnThaL") should return 0
 - Negative ID test: countEntries("neighbourhood id", "-20") should return 0
+
+lookupPicnicEntry tests:
+- Matching tableID test: Uses the first entry's tableID from the imported picnic table. Calls lookupPicnicEntry() and checks that the returned pointer is not NULL and that the tableID of the returned entry matches the one we searched for.
+- Non-matching tableID test: Calls lookupPicnicEntry() with tableID 999999 and verifies it returns NULL, since that ID does not exist in the table.
+
+editTableEntry tests:
+- Valid table type edit test: Edits the first entry's table type to "Steel Picnic Table". After the edit, looks up the entry and resolves the tableTypeID using lookupTableName() to confirm the value was actually updated.
+- New value insertion test: Edits the table type to "Completely New Type", which does not exist in the tableTypeTable. Verifies the edit went through, which also confirms the new value was inserted into the lookup table.
+- Invalid tableID test: Calls editTableEntry() with tableID 999999, which does not exist. Verifies the program does not crash. No entry should be modified.
+- Invalid member name test: Calls editTableEntry() with a fake member name. Verifies the program does not crash and handles the unknown field gracefully.
+
+reportByNeighbourhood and reportByWard tests:
+- reportByNeighbourhood() run test: Calls the function and verifies it completes without crashing. Output is printed to the console and can be visually checked for alphabetical grouping by neighbourhood.
+- reportByWard() run test: Same approach as above. Output can be visually checked for alphabetical grouping by ward.
