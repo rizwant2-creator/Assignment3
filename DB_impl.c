@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 Table *createTable(void){ //create empty lookup table
     Table *t = malloc(sizeof(Table));
@@ -110,7 +111,7 @@ const char *lookupNeighbourhoodName(NeighbourhoodTable *nt, int id){
     return NULL;
 }
 
-//insertion helpers for Table. Returns the id of the inserted entry, or -1 on failure.
+//insertion helpers for Table. 
 int insertToTable(Table *t, const char *name){
 
     if (t->size >= t->capacity){
@@ -135,7 +136,7 @@ int insertToTable(Table *t, const char *name){
     return newEntryid;
 }
 
-//insertion helpers for NeighbourhoodTable. Returns the id of the inserted entry, or -1 on failure.
+//insertion helpers for NeighbourhoodTable.
 int insertToNeighbourhoodTable(NeighbourhoodTable *nt, int id, const char *name){
 
     if (nt->size >= nt->capacity){
@@ -157,7 +158,7 @@ int insertToNeighbourhoodTable(NeighbourhoodTable *nt, int id, const char *name)
     return id;
 }
 
-//lookup picnic entry by tableID. Returns pointer to entry, or NULL if not found.
+//lookup picnic entry by tableID.
 PicnicTableEntry *lookupPicnicEntry(PicnicTable *pt, int tableID){
     int i;
     for (i = 0; i < pt->size; i++){
@@ -168,7 +169,18 @@ PicnicTableEntry *lookupPicnicEntry(PicnicTable *pt, int tableID){
     return NULL;
 }
 
-//insertion helpers for PicnicTable. Returns the id of the inserted entry, or -1 on failure.
+//lookup picnic entry by siteID.
+PicnicTableEntry *lookupPicnicTBySiteID(PicnicTable *pt, int siteID){
+    int i;
+    for (i = 0; i < pt->size; i++){
+        if (pt->entries[i].siteID == siteID){
+            return &pt->entries[i];
+        }
+    }
+    return NULL;
+}
+
+//insertion helpers for PicnicTable.
 int insertToPicnicTable(PicnicTable *pt, PicnicTableEntry *entry){
 
     if (pt->size >= pt->capacity){
@@ -182,4 +194,88 @@ int insertToPicnicTable(PicnicTable *pt, PicnicTableEntry *entry){
     pt->entries[pt->size] = *entry; //copy entry to table
     pt->size++;
     return entry->tableID;
+}
+
+void convertToBitField(FILE* file,uint32_t value)
+{
+    fwrite(&value,sizeof(uint32_t),1,file);
+}
+void compressDB(char *fileName)
+{
+
+    FILE *file;
+    PicnicTableEntry* entry;
+    if (Db == NULL || fileName == NULL)
+    {
+        return;
+    }
+    file = fopen(fileName,'wb');
+    if (file == NULL)
+    {
+        return;
+    }
+    convertToBitField(file,(uint32_t)Db->tableTypeTable->size);
+    convertToBitField(file,(uint32_t)Db->surfaceMaterialTable->size);
+    convertToBitField(file,(uint32_t)Db->structuralMaterialTable->size);
+    convertToBitField(file,(uint32_t)Db->neighborhoodTable->size);
+    convertToBitField(file,(uint32_t)Db->picnicTableTable->size);
+    
+    uint32_t len = (uint32_t) strlen("\n");
+    convertToBitField(file,len);
+    fwrite("\n",1,len,file);
+    for (int i=0;i<Db->tableTypeTable->size;i++)
+    {
+        convertToBitField(file,(uint32_t)Db->tableTypeTable->entries[i].id);
+        len = (uint32_t) strlen(Db->tableTypeTable->entries[i].type);
+        convertToBitField(file,len);
+        fwrite(Db->tableTypeTable->entries[i].type,1,len,file);
+    }
+    for (int i=0;i<Db->surfaceMaterialTable->size;i++)
+    {
+        convertToBitField(file,(uint32_t)Db->surfaceMaterialTable->entries[i].id);
+        len = (uint32_t) strlen(Db->surfaceMaterial->entries[i].type);
+        convertToBitField(file,len);
+        fwrite(Db->surfaceMaterial->entries[i].type,1,len,file);
+    }
+    for (int i=0;i<Db->structuralMaterialTable->size;i++)
+    {
+        convertToBitField(file,(uint32_t)Db->structuralMaterialTable->entries[i].id);
+        len = (uint32_t) strlen(Db->structuralMaterial->entries[i].type);
+        convertToBitField(file,len);
+        fwrite(Db->structuralMaterial->entries[i].type,1,len,file);
+    }
+    for (int i=0;i<Db->neighborhoodTable->size;i++)
+    {
+        convertToBitField(file,(uint32_t)Db->neighborhoodTable->entries[i].id);
+        len = (uint32_t) strlen(Db->neighborhoodTable->entries[i].type);
+        convertToBitField(file,len);
+        fwrite(Db->neighborhoodTable->entries[i].type,1,len,file);
+    }
+    for (int i=0;i<Db->picnicTableTable->size;i++)
+    {
+        entry = &Db->picnicTableTable->entries[i];
+        convertToBitField(file,(uint32_t) entry->tableID);
+        convertToBitField(file,(uint32_t) entry->siteID);
+        convertToBitField(file,(uint32_t) entry->tableTypeID);
+        convertToBitField(file,(uint32_t) entry->surfaceMaterialID);
+        convertToBitField(file,(uint32_t) entry->structuralMaterialID);
+        len = (uint32_t) strlen(entry->street);
+        convertToBitField(file,len);
+        fwrite(entry->street,1,len,file);
+        convertToBitField(file,(uint32_t) entry->neighbourhoodID);
+        len = (uint32_t) strlen(entry->ward);
+        convertToBitField(file,len);
+        fwrite(entry->ward,1,len,file);
+        len = (uint32_t) strlen(entry->latitude);
+        convertToBitField(file,len);
+        fwrite(entry->latitude,1,len,file);
+        len = (uint32_t) strlen(entry->longitude);
+        convertToBitField(file,len);
+        fwrite(entry->longitude,1,len,file);
+        len = (uint32_t) strlen(entry->location);
+        convertToBitField(file,len);
+        fwrite(entry->location,1,len,file);
+
+    }
+    fclose(file);
 }

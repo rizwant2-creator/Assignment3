@@ -35,7 +35,12 @@ int insertToTable(Table *t, const char *name);
 int insertToNeighbourhoodTable(NeighbourhoodTable *nt, int id, const char *name);
 int insertToPicnicTable(PicnicTable *pt, PicnicTableEntry *entry);
 
-//picnic table entry lookup by tableID
+//picnic table entry lookup by tableID and siteID
 PicnicTableEntry *lookupPicnicEntry(PicnicTable *pt, int tableID);
+PicnicTableEntry *lookupPicnicTBySiteID(PicnicTable *pt, int siteID);
+
+void convertToBitField(FILE* file,uint32_t value);
+void compressDB(char *fileName);
+
 
 #endif
