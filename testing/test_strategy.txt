@@ -1,0 +1,20 @@
+Create Helper function tests:
+- createTable() test: Creates a new Table structure and verifies it initializes with capacity == INIT_SIZE (5), entries is != NULL, and size == 0. This confirms proper dynamic memory allocation for lookup tables
+- createNeighbourhoodTable() test: Same verification for NeighbourhoodTable structure, ensuring neighbourhood lookup table initializes correctly
+- createPicnicTable() test: Verifies PicnicTable (main data table) initializes with correct capacity and empty state
+- Each test allocation is freed with free(table->entries); free(table); before moving on
+
+Lookup Helper function tests:
+- lookupTableName() matching ID test: First calls lookupTableID(Db->tableTypeTable, "Round Picnic Table") to get a known-good table type ID from the imported data
+- Then calls lookupTableName() with that ID and verifies it returns exactly "Round Picnic Table". This test confirms lookup works
+- lookupTableName() non-matching ID test: Calls lookupTableName(table, 999999) and verifies it returns NULL for non existing ID
+- lookupNeighbourhoodName() matching ID test: Directly tests lookupNeighbourhoodName(neighborhoodTable, 5130) returns exactly "CARTER CREST"
+- lookupNeighbourhoodName() non-matching ID test: Verifies lookupNeighbourhoodName(neighborhoodTable, 999999) returns NULL.
+
+countEntries function tests:
+- Matching name test: countEntries("neighbourhood name", "CARTER CREST") should return 1 
+- Non-matching name test: countEntries("neighbourhood name", "fake neighbourhood") should return 
+- Matching ID test: countEntries("neighbourhood id", "5130") should return 1
+- Non-matching ID test: countEntries("neighbourhood id", "999999999") should return 0
+- Case sensitivity test: countEntries("neighbourhood name", "RoSEnThaL") should return 0
+- Negative ID test: countEntries("neighbourhood id", "-20") should return 0
