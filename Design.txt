@@ -1,0 +1,35 @@
+ createTable design:
+ - The create table functions use dynamic memory allocation for the table structure and the entries array
+ - Each allocates INIT_SIZE entries initially
+ - If the first malloc fails it returns NULL right after
+ - If the second fails, free the first allocation before NULL to prevent memory leaks 
+ - Dynamic allocation supports table groth during imported
+ - Issues:
+    - One issue was handling the double malloc failure
+      - A solution for this was to ensure structure freed if entries allocation fails before retuning NULL
+    - Another issue was testing cleanup
+      - The solution was adding free(table->entries) then free(table) for each test
+  
+  Lookup Helper design:
+  - The lookup functions use linear search through the table entries 
+  - lookupTableName scans Table->entries and returns type string where the id matches 
+  - lookupNeighbourhoodName scanes NeighbourhoodTable->entries and returns name string where the id matches 
+  - Both return NULL when no matching id is found 
+  - This design was chosen because it matches the dynamic array storage 
+  - Linear search works well for the small lookup table sizes 
+  - Issues:
+    - One issue during testing with correct table type id since ids are assigned dynamically during import 
+      - The solution was using lookupTableID() furst to get a known id for testing 
+ 
+ countEntries design:
+ - The countEntries function checks the requested member name and then counts how many entries in the picnic table match the given value 
+ - For coded fields such as table type, surface material, and structural material, the function first uses the lookup table to find the matching ID.
+   it then scans the picnic table and counts entries with that ID
+ - For stored text field suchs as neighbourhood name and ward, the function compares the stored string values directly 
+ - This design was chosen because it matches how the data is stored. It also keeps the logic simple with code values matched by ID, and strings matched by string comparison
+ - Issues:
+    - One issue was that countEntries needed to handle both coded fields like table type and string fields.
+        - The Solution was to check the member name first and use the lookup tables for coded fields, and string comparison for other fields 
+    - Another issue was case sensitivity. If the user types "round picinic table" but the stored value is "Round Picnic table", strmcmp would not match
+        - A solution for this was to use strcasecmp but optimally we just kept the stored values exactly as imported for correct CSV export 
+    
