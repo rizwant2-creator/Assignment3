@@ -1,0 +1,16 @@
+we tested the data processing module with the given csv files
+
+what we tested: 
+ - importDB
+ - countEntries
+ - sortByMember
+ - exportDB
+ - freeDB
+
+how we tested: 
+ - we wrote a simple test.c program inside testing folder 
+ - created 2 seperate files test_export and test_report.c 
+ - after each function theres a respective print statement
+ - we ran all the tests on PicnicTableSmall.csv
+ - we also tested the exported file , output.csv against the original data file
+

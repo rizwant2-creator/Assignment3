@@ -185,9 +185,9 @@ int insertToPicnicTable(PicnicTable *pt, PicnicTableEntry *entry){
     return entry->tableID;
 }
 
-void convertToBitField(FILE* file,uint32_t value)
+void convertToBitField(FILE* file,int value)
 {
-    fwrite(&value,sizeof(uint32_t),1,file);
+    fwrite(&value,sizeof(int),1,file);
 }
 void compressDB(char *fileName)
 {
@@ -203,65 +203,65 @@ void compressDB(char *fileName)
     {
         return;
     }
-    convertToBitField(file,(uint32_t)Db->tableTypeTable->size);
-    convertToBitField(file,(uint32_t)Db->surfaceMaterialTable->size);
-    convertToBitField(file,(uint32_t)Db->structuralMaterialTable->size);
-    convertToBitField(file,(uint32_t)Db->neighborhoodTable->size);
-    convertToBitField(file,(uint32_t)Db->picnicTableTable->size);
+    convertToBitField(file,Db->tableTypeTable->size);
+    convertToBitField(file,Db->surfaceMaterialTable->size);
+    convertToBitField(file,Db->structuralMaterialTable->size);
+    convertToBitField(file,Db->neighborhoodTable->size);
+    convertToBitField(file,Db->picnicTableTable->size);
     
-    uint32_t len = (uint32_t) strlen("\n");
+    int len = strlen("\n");
     convertToBitField(file,len);
     fwrite("\n",1,len,file);
     for (int i=0;i<Db->tableTypeTable->size;i++)
     {
-        convertToBitField(file,(uint32_t)Db->tableTypeTable->entries[i].id);
-        len = (uint32_t) strlen(Db->tableTypeTable->entries[i].type);
+        convertToBitField(file,Db->tableTypeTable->entries[i].id);
+        len =  strlen(Db->tableTypeTable->entries[i].type);
         convertToBitField(file,len);
         fwrite(Db->tableTypeTable->entries[i].type,1,len,file);
     }
     for (int i=0;i<Db->surfaceMaterialTable->size;i++)
     {
-        convertToBitField(file,(uint32_t)Db->surfaceMaterialTable->entries[i].id);
-        len = (uint32_t) strlen(Db->surfaceMaterialTable->entries[i].type);
+        convertToBitField(file,Db->surfaceMaterialTable->entries[i].id);
+        len = strlen(Db->surfaceMaterialTable->entries[i].type);
         convertToBitField(file,len);
         fwrite(Db->surfaceMaterialTable->entries[i].type,1,len,file);
     }
     for (int i=0;i<Db->structuralMaterialTable->size;i++)
     {
-        convertToBitField(file,(uint32_t)Db->structuralMaterialTable->entries[i].id);
-        len = (uint32_t) strlen(Db->structuralMaterialTable->entries[i].type);
+        convertToBitField(file,Db->structuralMaterialTable->entries[i].id);
+        len = strlen(Db->structuralMaterialTable->entries[i].type);
         convertToBitField(file,len);
         fwrite(Db->structuralMaterialTable->entries[i].type,1,len,file);
     }
     for (int i=0;i<Db->neighborhoodTable->size;i++)
     {
-        convertToBitField(file,(uint32_t)Db->neighborhoodTable->entries[i].id);
-        len = (uint32_t) strlen(Db->neighborhoodTable->entries[i].nname);
+        convertToBitField(file,Db->neighborhoodTable->entries[i].id);
+        len = strlen(Db->neighborhoodTable->entries[i].nname);
         convertToBitField(file,len);
         fwrite(Db->neighborhoodTable->entries[i].nname,1,len,file);
     }
     for (int i=0;i<Db->picnicTableTable->size;i++)
     {
         entry = &Db->picnicTableTable->entries[i];
-        convertToBitField(file,(uint32_t) entry->tableID);
-        convertToBitField(file,(uint32_t) entry->siteID);
-        convertToBitField(file,(uint32_t) entry->tableTypeID);
-        convertToBitField(file,(uint32_t) entry->surfaceMaterialID);
-        convertToBitField(file,(uint32_t) entry->structuralMaterialID);
-        len = (uint32_t) strlen(entry->street);
+        convertToBitField(file,entry->tableID);
+        convertToBitField(file,entry->siteID);
+        convertToBitField(file,entry->tableTypeID);
+        convertToBitField(file,entry->surfaceMaterialID);
+        convertToBitField(file,entry->structuralMaterialID);
+        len = strlen(entry->street);
         convertToBitField(file,len);
         fwrite(entry->street,1,len,file);
-        convertToBitField(file,(uint32_t) entry->neighbourhoodID);
-        len = (uint32_t) strlen(entry->ward);
+        convertToBitField(file,entry->neighbourhoodID);
+        len = strlen(entry->ward);
         convertToBitField(file,len);
         fwrite(entry->ward,1,len,file);
-        len = (uint32_t) strlen(entry->latitude);
+        len = strlen(entry->latitude);
         convertToBitField(file,len);
         fwrite(entry->latitude,1,len,file);
-        len = (uint32_t) strlen(entry->longitude);
+        len = strlen(entry->longitude);
         convertToBitField(file,len);
         fwrite(entry->longitude,1,len,file);
-        len = (uint32_t) strlen(entry->location);
+        len = strlen(entry->location);
         convertToBitField(file,len);
         fwrite(entry->location,1,len,file);
 
